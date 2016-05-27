@@ -125,7 +125,7 @@ RUN apk --update add ruby git nodejs && \
       gem install --no-document jekyll && \
       gem install --no-document bundler io-console && \
       apk del build-dependencies && \
-      rm -rf /var/cache/apk/
+      rm -rf /var/cache/apk/*
 ```
 
 Build a Docker image as follows:
@@ -160,7 +160,7 @@ You can test the site by running the **serve** mode:
 bundle exec jekyll serve -H 0.0.0.0
 ```
 
-...and then connecting with your favorite web browser to ***http://127.0.0.1:4000***.
+...and then connecting with your favorite web browser to [http://127.0.0.1:4000](http://127.0.0.1:4000).
 
 You can also clean up the build environment. However, be aware that you might
 need to re-install ***libxml2*** and ***libxslt*** later on even though
