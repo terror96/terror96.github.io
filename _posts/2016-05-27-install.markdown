@@ -6,7 +6,11 @@ categories: installation
 ---
 # Introduction
 
-I wrote these instructions on how to setup these GitHub Pages with Jekyll. These instructions have been tested on:
+I wrote these steps on how to setup these GitHub Pages with
+[Jekyll](http://jekyllrb.com), because I got tired of following misleading
+and incomplete instructions.
+
+These instructions have been tested on:
 
 ```
 user@swarm:~/github.io$ lsb_release -a
@@ -17,14 +21,22 @@ Release:    14.04
 Codename:   trusty
 ```
 
+Prerequisite
+------------
+
+If you have never built anything on your Ubuntu system, please install:
+
+```
+$ sudo apt-get install build-essential git
+```
+
 Jekyll
 ------
 
 Jekyll depends on both Ruby2.0 and its development libraries:
 
 ```
-$ sudo apt-get install ruby2.0
-$ sudo apt-get install ruby2.0-dev
+$ sudo apt-get install ruby2.0 ruby2.0-dev
 ```
 
 Once the dependencies are in place, install the Jekyll binary:
@@ -43,8 +55,7 @@ In case you want to verify the site before committing code to GitHub, install [b
 Bundler requires a JavaScript runtime and zlib development libraries.
 
 ```
-$ sudo apt-get install nodejs
-$ sudo apt-get install zlib1g-dev
+$ sudo apt-get install nodejs zlib1g-dev
 ```
 
 Once the dependencies are in place, install the bundler binary:
