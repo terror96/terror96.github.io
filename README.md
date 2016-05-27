@@ -1,1 +1,1 @@
-# terror96.github.io
+The awesome GitHub page of terror96.

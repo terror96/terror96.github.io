@@ -1,0 +1,164 @@
+---
+layout: post
+title:  "Install this site!"
+date:   2016-05-27 13:11:47 +0300
+categories: installation
+---
+# Introduction
+
+I wrote these instructions on how to setup these GitHub Pages with Jekyll. These instructions have been tested on:
+
+```
+user@swarm:~/github.io$ lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 14.04.4 LTS
+Release:    14.04
+Codename:   trusty
+```
+
+Jekyll
+------
+
+Jekyll depends on both Ruby2.0 and its development libraries:
+
+```
+$ sudo apt-get install ruby2.0
+$ sudo apt-get install ruby2.0-dev
+```
+
+Once the dependencies are in place, install the Jekyll binary:
+
+```
+$ sudo gem2.0 install jekyll
+```
+
+Bundler
+-------
+
+In case you want to verify the site before committing code to GitHub, install [bundler](http://bundler.io/).
+
+***The remaining instructions assume that you are using bundler.***
+
+Bundler requires a JavaScript runtime and zlib development libraries.
+
+```
+$ sudo apt-get install nodejs
+$ sudo apt-get install zlib1g-dev
+```
+
+Once the dependencies are in place, install the bundler binary:
+
+```
+$ sudo gem2.0 install bundler
+```
+
+Github
+------
+
+Create your personal web page at [github.com/new](http://github.com/new) and use ***yourusername.github.io.git*** as "Repository name".
+
+Local git repository
+--------------------
+
+```
+$ git clone https://github.com/<yourusername>/<yourusername>.github.io.git
+$ cd <your_github_login_name>.github.io.git
+$ cat > Gemfile << EOF
+source 'https://rubygems.org'
+gem 'github-pages', group: :jekyll_plugins
+EOF
+$ bundle install
+$ bundle exec jekyll new . --force
+```
+
+Testing
+-------
+
+```
+$ bundle exec jekyll serve
+```
+
+Connect with your favorite web browser to the shown server address.
+
+Publishing
+----------
+You can publish the site by simply using ***git***.
+
+```
+git add .
+git commit -m "Initial release."
+git push
+```
+
+Docker
+------
+
+If you would like to run everything in a safe environment, consider using [Docker](https://www.docker.com/).
+
+The following ***Dockerfile*** installs everything required into an Alpine based container.
+
+```
+####################################
+# Dockerfile for Jekyll with bundler
+# Based on alpine:latest
+#
+# VERSION 1.0                       
+####################################
+
+FROM alpine:latest
+MAINTAINER Tero Kauppinen, terror96@gmail.com
+
+RUN apk --update add ruby git nodejs && \
+      apk add --virtual build-dependencies build-base ruby-dev libffi-dev zlib-dev && \
+      gem install --no-document jekyll && \
+      gem install --no-document bundler io-console && \
+      apk del build-dependencies && \
+      rm -rf /var/cache/apk/
+```
+
+Build a Docker image as follows:
+
+```
+docker build -f Dockerfile -t jekyll .
+```
+
+Once you have built the image, you can launch it as follows:
+
+```
+docker run -ti -p 4000:4000 jekyll /bin/sh
+```
+
+Inside the container, run the following commands:
+
+```
+$ cd && git clone https://github.com/<yourusername>/<yourusername>.github.io.git
+$ cd <your_github_login_name>.github.io.git
+$ cat > Gemfile << EOF
+source 'https://rubygems.org'
+gem 'github-pages', group: :jekyll_plugins
+EOF
+$ apk --update add --virtual build-dependencies build-base ruby-dev libxml2-dev libxslt-dev
+$ bundle config build.nokogiri --use-system-libraries
+$ bundle install
+```
+
+You can test the site by running the **serve** mode:
+
+```
+bundle exec jekyll serve -H 0.0.0.0
+```
+
+...and then connecting with your favorite web browser to ***http://127.0.0.1:4000***.
+
+You can also clean up the build environment. However, be aware that you might
+need to re-install ***libxml2*** and ***libxslt*** later on even though
+***bundle exec jekyll...*** seems to work without those dependencies at first.
+Also, if you ever need to re-run ***bundle install***, you need the build
+dependencies again.
+
+```
+apk del build-dependencies
+rm -rf /var/cache/apk/*
+```
+
