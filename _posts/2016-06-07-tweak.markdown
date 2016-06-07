@@ -1,0 +1,34 @@
+---
+layout: post
+title:  "System freezes when copying large files"
+date:   2016-06-07 18:11:47 +0300
+categories: fixes
+---
+# Symptoms
+
+Linux 4.4.0-22-generic on ***Ubuntu 16.04 LTS*** seems a little bit
+unresponsive from time to time when copying large files e.g to a USB pen drive.
+In my experience, even the Unity clock can freeze for a couple of seconds
+during the operation. I didn't experience the previous with older Ubuntu LTS
+releases.
+
+# Fix
+
+This [blog](https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/) makes a good job in explaining all the details. However,
+I jump directly to my modifications.
+
+Append the following to ***/etc/sysctl.conf*** (root permissions required):
+
+```
+# Limit the buffer size for asynchronous operations
+vm.dirty_background_bytes = 16777216
+vm.dirty_bytes = 50331648
+# Avoid swapping unless absolutely necessary
+vm.swappiness = 0
+```
+
+You can enforce the new sysctl settings without rebooting:
+
+```
+sudo sysctl -p
+```
