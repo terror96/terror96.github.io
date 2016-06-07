@@ -1,0 +1,56 @@
+yout: post
+title:  "Kernel Panic with encrypted USB hard drives"
+date:   2016-06-07 13:11:47 +0300
+categories: fixes
+---
+# Crashes
+
+I started having weird crashed on my Ubuntu 14.0.4 LTS installation with
+vmlinux-3.13.0-86-generic ever since encrypting my hard drives. However, it
+took awhile to confirm that crashes where indeed a result of using encrypted
+drives.
+
+Enabling [Kernel Crash Dumps](https://wiki.ubuntu.com/Kernel/CrashdumpRecipe)
+revealed the following result:
+
+```
+crash> dmesg
+(snip)
+[276014.275518] Call Trace:
+[276014.275535]  [<ffffffff813117a7>] ? aa_alloc_task_context+0x27/0x40
+[276014.275551]  [<ffffffff813117a7>] aa_alloc_task_context+0x27/0x40
+[276014.275567]  [<ffffffff813199eb>] apparmor_cred_prepare+0x1b/0x50
+[276014.275589]  [<ffffffff812dd716>] security_prepare_creds+0x16/0x20
+[276014.275606]  [<ffffffff81093506>] prepare_creds+0xf6/0x1c0
+[276014.275627]  [<ffffffff811bfc9a>] SyS_access+0x3a/0x1f0
+[276014.275648]  [<ffffffff8173b01d>] system_call_fastpath+0x1a/0x1f
+[276014.275665] Code: cd 00 00 49 8b 50 08 4d 8b 20 49 8b 40 10 4d 85 e4 0f 84 34 01 00 00 48 85 c0 0f 84 2b 01 00 00 49 63 47 20 48 8d 4a 01 4d 8b 07 <49> 8b 1c 04 4c 89 e0 65 49 0f c7 08 0f 94 c0 84 c0 74 b9 49 63
+[276014.275741] RIP  [<ffffffff811a6760>] kmem_cache_alloc_trace+0x80/0x210
+(snip)
+```
+...and the task queue showed:
+```
+crash> task
+PID: 27378  TASK: ffff880366d69800  CPU: 2   COMMAND: "Chrome_IOThread"
+struct task_struct {
+  state = 0,
+  stack = 0xffff8800bb858000,
+  usage = {
+    counter = 2
+(snip)
+```
+
+***Chrome_IOThread???*** Yes, indeed! I then remembered Chrome being one of the
+combining factors during each crash. Apparently using Chrome while doing heavy
+IO on encrypted hard drives triggered a bug in the kernel.
+
+# Solution
+Using instructions from
+[Ubuntu](https://wiki.ubuntu.com/Kernel/LTSEnablementStack), I updated the 14.04
+LTS kernel to a newer version:
+
+```
+sudo apt-get install --install-recommends linux-generic-lts-wily xserver-xorg-core-lts-wily xserver-xorg-lts-wily xserver-xorg-video-all-lts-wily xserver-xorg-input-all-lts-wily libwayland-egl1-mesa-lts-wily libgl1-mesa-glx-lts-wily libgl1-mesa-glx-lts-wily:i386 libglapi-mesa-lts-wily:i386
+```
+I'm still reluctant to crash my machine on purpose, but things seem more stable
+for now.
