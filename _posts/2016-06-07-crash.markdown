@@ -1,15 +1,16 @@
 ---
 layout: post
-title:  "Kernel Panic with encrypted USB hard drives"
+title:  "Kernel Panic with encrypted hard drives"
 date:   2016-06-07 13:11:47 +0300
 categories: fixes
 ---
 # Crashes
 
 I started having weird crashed on my Ubuntu 14.0.4 LTS installation with
-vmlinux-3.13.0-86-generic ever since encrypting my hard drives. However, it
-took awhile to confirm that crashes where indeed a result of using encrypted
-drives.
+vmlinux-3.13.0-86-generic ever since encrypting my hard drives (the same
+result on my laptop with external USB drives than on my desktop with an
+interal hard drive). However, it took awhile to confirm that crashes where
+indeed a result of using encrypted drives.
 
 Enabling [Kernel Crash Dumps](https://wiki.ubuntu.com/Kernel/CrashdumpRecipe)
 revealed the following result:
@@ -30,6 +31,7 @@ crash> dmesg
 (snip)
 ```
 ...and the task queue showed:
+
 ```
 crash> task
 PID: 27378  TASK: ffff880366d69800  CPU: 2   COMMAND: "Chrome_IOThread"
@@ -53,5 +55,5 @@ LTS kernel to a newer version:
 ```
 sudo apt-get install --install-recommends linux-generic-lts-wily xserver-xorg-core-lts-wily xserver-xorg-lts-wily xserver-xorg-video-all-lts-wily xserver-xorg-input-all-lts-wily libwayland-egl1-mesa-lts-wily libgl1-mesa-glx-lts-wily libgl1-mesa-glx-lts-wily:i386 libglapi-mesa-lts-wily:i386
 ```
-I'm still reluctant to crash my machine on purpose, but things seem more stable
-for now.
+I'm still reluctant to try to crash my machine on purpose, but things seem
+more stable for now.
