@@ -6,8 +6,8 @@ categories: fixes
 ---
 # Crashes
 
-I started having weird crashed on my Ubuntu 14.0.4 LTS installation with
-vmlinux-3.13.0-86-generic ever since encrypting my hard drives (the same
+I started having weird crashes on my Ubuntu 14.0.4 LTS installation with
+vmlinux-3.13.0-86-generic after encrypting my hard drives (the same
 result on my laptop with external USB drives than on my desktop with an
 interal hard drive). However, it took awhile to confirm that crashes where
 indeed a result of using encrypted drives.
